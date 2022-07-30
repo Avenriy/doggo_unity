@@ -6,7 +6,6 @@ public class sample_leg_up_down : MonoBehaviour
 {
   HingeJoint joint;
   JointMotor motor;
-  bool motor_on_ = false;
   // Start is called before the first frame update
   void Start()
   {
@@ -34,14 +33,12 @@ public class sample_leg_up_down : MonoBehaviour
     joint.motor = motor;
     joint.useMotor = true;
     Debug.Log("motor on");
-    motor_on_ = true;
   }
 
   void motor_off()
   {
     joint.useMotor = false;
     Debug.Log("motor off");
-    motor_on_ = false;
   }
 
   void bending_leg()
