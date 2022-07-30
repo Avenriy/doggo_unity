@@ -6,11 +6,13 @@ public class leg_controller : MonoBehaviour
 {
   HingeJoint joint;
   JointMotor motor;
+  JointLimits limits;
   // Start is called before the first frame update
   void Start()
   {
     joint = gameObject.GetComponent<HingeJoint>();
     motor = joint.motor;
+    limits = joint.limits;
     motor_on();
   }
 
@@ -31,7 +33,7 @@ public class leg_controller : MonoBehaviour
   void motor_on()
   {
     CancelInvoke();
-    motor.targetVelocity = 100;
+    // motor.targetVelocity = 100;
     motor.force = 45;
     joint.motor = motor;
     joint.useMotor = true;
@@ -48,7 +50,12 @@ public class leg_controller : MonoBehaviour
   void bending_leg()
   {
     CancelInvoke();
-    motor.targetVelocity = -100;
+    if (gameObject.transform.name == "Link1Front") {
+      motor.targetVelocity = 100;
+    }
+    if (gameObject.transform.name == "Link1Rear") {
+      motor.targetVelocity = -100;
+    }
     Debug.Log("bending leg");
     joint.motor = motor;
   }
@@ -56,7 +63,11 @@ public class leg_controller : MonoBehaviour
   void extending_leg()
   {
     CancelInvoke();
-    motor.targetVelocity = 100;
+    if (gameObject.transform.name == "Link1Front") {
+      motor.targetVelocity = -100;
+    } else if (gameObject.transform.name == "Link1Rear") {
+      motor.targetVelocity = 100;
+    }
     Debug.Log("extending leg");
     joint.motor = motor;
   }
@@ -64,115 +75,206 @@ public class leg_controller : MonoBehaviour
   void modeWalk()
   {
     Debug.Log("mode walk");
-    InvokeRepeating("walkStep1", 0, 3);
-    InvokeRepeating("walkStep2", 1, 3);
-    InvokeRepeating("walkStep2", 2, 3);
+    motor.force = 100000;
+    joint.motor = motor;
+    joint.useLimits = true;
+    if (gameObject.transform.parent.name == "FrontLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        limits.min = -80;
+        limits.max = 40;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        limits.min = -45;
+        limits.max = 45;
+      }
+    } else if (gameObject.transform.parent.name == "RearRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        limits.min = -60;
+        limits.max = 60;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        limits.min = -45;
+        limits.max = 135;
+      }
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        limits.min = -80;
+        limits.max = 30;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        limits.min = -45;
+        limits.max = 45;
+      }
+    } else if (gameObject.transform.parent.name == "RearLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        limits.min = -60;
+        limits.max = 60;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        limits.min = -45;
+        limits.max = 135;
+      }
+    }
+    joint.limits = limits;
+    Invoke("walkStep1", 0);
+    InvokeRepeating("walkStep2", 0.5f, 4);
+    InvokeRepeating("walkStep3", 1.5f, 4);
+    InvokeRepeating("walkStep4", 2.5f, 4);
+    InvokeRepeating("walkStep5", 3.5f, 4);
   }
 
   void walkStep1()
   {
     if (gameObject.transform.parent.name == "FrontLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -100;
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = -50;
+        motor.targetVelocity = 40;
       }
-      joint.motor = motor;
     } else if (gameObject.transform.parent.name == "RearRight") {
-      if (gameObject.transform.name == "Joint") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
         motor.targetVelocity = -100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = -50;
+        motor.targetVelocity = 100;
       }
-      joint.motor = motor;
-    }
-    if (gameObject.transform.parent.name == "FrontRight") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -50;
-      } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = 200;
-      }
-      joint.motor = motor;
     } else if (gameObject.transform.parent.name == "RearLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -50;
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = 200;
+        motor.targetVelocity = 100;
       }
-      joint.motor = motor;
     }
+    joint.motor = motor;
   }
 
   void walkStep2()
   {
     if (gameObject.transform.parent.name == "FrontLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = 50;
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -50;
       } else if (gameObject.transform.name == "Link1Rear") {
         motor.targetVelocity = -100;
       }
-      joint.motor = motor;
     } else if (gameObject.transform.parent.name == "RearRight") {
-      if (gameObject.transform.name == "Joint") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -50;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = -100;
+      }
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
         motor.targetVelocity = 100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = 200;
+        motor.targetVelocity = 40;
       }
-      joint.motor = motor;
-    }
-    if (gameObject.transform.parent.name == "FrontRight") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -100;
-      } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = -50;
-      }
-      joint.motor = motor;
     } else if (gameObject.transform.parent.name == "RearLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -100;
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = -50;
+        motor.targetVelocity = 40;
       }
-      joint.motor = motor;
     }
+    joint.motor = motor;
   }
 
   void walkStep3()
   {
     if (gameObject.transform.parent.name == "FrontLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = 50;
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = 100;
+        motor.targetVelocity = -40;
       }
-      joint.motor = motor;
     } else if (gameObject.transform.parent.name == "RearRight") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = 100;
-      } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = 200;
-      }
-      joint.motor = motor;
-    }
-    if (gameObject.transform.parent.name == "FrontRight") {
-      if (gameObject.transform.name == "Joint") {
+      if (gameObject.transform.name == "Link1Front") {
         motor.targetVelocity = -100;
       } else if (gameObject.transform.name == "Link1Rear") {
-        motor.targetVelocity = -50;
+        motor.targetVelocity = -40;
       }
-      joint.motor = motor;
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -50;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = -100;
+      }
     } else if (gameObject.transform.parent.name == "RearLeft") {
-      if (gameObject.transform.name == "Joint") {
-        motor.targetVelocity = -100;
-      } else if (gameObject.transform.name == "Link1Rear") {
+      if (gameObject.transform.name == "Link1Front") {
         motor.targetVelocity = -50;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = -100;
       }
-      joint.motor = motor;
     }
+    joint.motor = motor;
   }
 
+  void walkStep4()
+  {
+    if (gameObject.transform.parent.name == "FrontLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "RearRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = -40;
+      }
+    } else if (gameObject.transform.parent.name == "RearLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = -100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = -40;
+      }
+    }
+    joint.motor = motor;
+  }
+
+  void walkStep5()
+  {
+    if (gameObject.transform.parent.name == "FrontLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "RearRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "FrontRight") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    } else if (gameObject.transform.parent.name == "RearLeft") {
+      if (gameObject.transform.name == "Link1Front") {
+        motor.targetVelocity = 100;
+      } else if (gameObject.transform.name == "Link1Rear") {
+        motor.targetVelocity = 40;
+      }
+    }
+    joint.motor = motor;
+  }
   void getParent()
   {
     Debug.Log("Parent name = " + gameObject.transform.parent.name);
+  }
+
+  void getConnectedBody()
+  {
+    Debug.Log("get connected body" + joint.connectedBody.name);
   }
 }
