@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class leg_up : MonoBehaviour
+public class sample_leg_up_down : MonoBehaviour
 {
   HingeJoint joint;
   JointMotor motor;
