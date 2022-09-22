@@ -1,9 +1,9 @@
 repositories:
-  Scripts/doggo_script_for_unity:
+  Assets/Scripts/doggo_script_for_unity:
     type: git
     url: https://github.com/Avenriy/doggo_script_for_unity.git
     version: main
-  Scripts/doggo_script_for_unity/porting_from_arduino:
+  Assets/Scripts/doggo_script_for_unity/porting_from_arduino:
     type: git
     url: https://github.com/Avenriy/porting_from_arduino.git
     version: main
